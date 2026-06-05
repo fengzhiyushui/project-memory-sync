@@ -157,7 +157,7 @@ git push -u origin main
 
 ## License
 
-Choose a license before making the repository public.
+MIT License. See [LICENSE](LICENSE).
 
 ---
 
@@ -318,4 +318,4 @@ git push -u origin main
 
 ## 许可证
 
-如果你准备公开仓库，建议先选择一个许可证。
+MIT License。详见 [LICENSE](LICENSE)。
