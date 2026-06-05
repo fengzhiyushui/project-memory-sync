@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+Thumbs.db
+.project-memory/
+tmp-project-memory-vault/
+90-Agent/
+20-Projects/
+60-Tasks/open-tasks.md

@@ -1,0 +1,3 @@
+display_name: Project Memory Sync
+short_description: Mirror project snapshots and deltas into an Obsidian/Hermes vault.
+default_prompt: Use project-memory-sync to record this project session into the Obsidian/Hermes vault.
