@@ -3,6 +3,9 @@ __pycache__/
 *.pyo
 .DS_Store
 Thumbs.db
+.env
+.env.*
+.vscode/
 .project-memory/
 tmp-project-memory-vault/
 90-Agent/
