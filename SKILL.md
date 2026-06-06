@@ -15,6 +15,7 @@ Always check `.project-memory/state.json` in the project root before deciding mo
 - If present and `initial_upload_completed` is true: run **delta upload**.
 - If present but incomplete: repair or rerun initial upload.
 - Never run delta mode before a completed initial upload exists.
+- Before writing `.project-memory/state.json`, ensure the target Git repository `.gitignore` contains `.project-memory/`; append it if missing so local sync state is not accidentally committed.
 
 ## Inputs
 
@@ -39,6 +40,8 @@ Write Markdown into the configured vault paths:
 If this skill is being used from a repo that is itself the vault workspace, write these paths directly under the repo root.
 
 If the user's actual vault is elsewhere, ask for or infer the vault path only when necessary.
+
+The helper script also maintains the target repository `.gitignore` by adding `.project-memory/` when needed. Treat that `.gitignore` edit as a normal project change to review and commit.
 
 ## Initial Upload
 

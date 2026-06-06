@@ -89,6 +89,40 @@ def run(cmd: list[str], cwd: Path) -> str:
     return result.stdout.strip()
 
 
+def git_root(repo: Path) -> Path | None:
+    root = run(["git", "rev-parse", "--show-toplevel"], repo)
+    return Path(root) if root else None
+
+
+def ignores_project_memory(lines: Iterable[str]) -> bool:
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        normalized = stripped.replace("\\", "/").lstrip("/")
+        if normalized in {".project-memory", ".project-memory/"}:
+            return True
+    return False
+
+
+def ensure_project_memory_gitignore(repo: Path) -> tuple[Path, bool] | None:
+    root = git_root(repo)
+    if root is None:
+        return None
+    gitignore = root / ".gitignore"
+    try:
+        content = gitignore.read_text(encoding="utf-8") if gitignore.exists() else ""
+    except OSError:
+        return None
+    if ignores_project_memory(content.splitlines()):
+        return gitignore, False
+    if content and not content.endswith(("\n", "\r")):
+        content += "\n"
+    content += ".project-memory/\n"
+    write_text(gitignore, content)
+    return gitignore, True
+
+
 def slugify(value: str) -> str:
     slug = re.sub(r"[^a-zA-Z0-9]+", "-", value.strip().lower()).strip("-")
     return slug or "project"
@@ -646,6 +680,7 @@ def main() -> int:
     if not vault.exists():
         vault.mkdir(parents=True)
 
+    gitignore_result = ensure_project_memory_gitignore(repo)
     state = load_state(repo)
     mode = args.mode
     if mode == "auto":
@@ -658,6 +693,11 @@ def main() -> int:
         result = delta_upload(info, state)
     else:
         result = initial_upload(info)
+
+    if gitignore_result:
+        gitignore_path, gitignore_updated = gitignore_result
+        result["gitignore"] = str(gitignore_path)
+        result["gitignore_updated"] = gitignore_updated
 
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 0

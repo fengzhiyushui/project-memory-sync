@@ -12,6 +12,7 @@ It creates a full project snapshot on first use, then records only incremental c
 - Generates delta upload packets from later Git changes.
 - Writes Obsidian-friendly Markdown files.
 - Maintains `.project-memory/state.json` so future runs know whether to use initial or delta mode.
+- Ensures the target repository `.gitignore` contains `.project-memory/` so local sync state is not accidentally committed.
 - Avoids copying secrets, credentials, generated builds, dependencies, and Git internals.
 - Suggests commit messages without automatically pushing to a remote.
 
@@ -67,6 +68,8 @@ The skill will inspect `.project-memory/state.json`:
 - If missing, it performs an initial upload.
 - If present and completed, it performs a delta upload.
 
+The helper script also checks the target Git repository's `.gitignore`. If `.project-memory/` is missing, it appends that ignore rule automatically.
+
 ## Helper Script
 
 From a repository root:
@@ -115,6 +118,12 @@ Delta upload creates or updates:
 20-Projects/<project-id>/status.md
 60-Tasks/open-tasks.md
 .project-memory/state.json
+```
+
+The target repository `.gitignore` is also created or updated when needed:
+
+```gitignore
+.project-memory/
 ```
 
 ## Safety
@@ -173,6 +182,7 @@ Project Memory Sync 是一个给 Codex / Claude Code 使用的 Skill，用来把
 - 根据后续 Git 修改生成增量上传包。
 - 输出适合 Obsidian 阅读的 Markdown 文件。
 - 维护 `.project-memory/state.json`，让后续运行知道应该走首次模式还是增量模式。
+- 确保目标仓库 `.gitignore` 包含 `.project-memory/`，避免本地同步状态被误提交。
 - 避免复制密钥、凭证、构建产物、依赖目录和 Git 内部文件。
 - 提供 commit message 建议，但不会自动 push 到远程仓库。
 
@@ -228,6 +238,8 @@ Skill 会先检查 `.project-memory/state.json`：
 - 如果不存在，执行首次上传。
 - 如果存在且已经完成首次上传，执行增量上传。
 
+辅助脚本还会检查目标 Git 仓库的 `.gitignore`。如果缺少 `.project-memory/`，会自动追加这条忽略规则。
+
 ## 辅助脚本
 
 在项目根目录执行：
@@ -276,6 +288,12 @@ python path/to/project-memory-sync/scripts/project_memory_sync.py --repo . --vau
 20-Projects/<project-id>/status.md
 60-Tasks/open-tasks.md
 .project-memory/state.json
+```
+
+目标仓库的 `.gitignore` 也会在需要时被创建或更新：
+
+```gitignore
+.project-memory/
 ```
 
 ## 安全边界
